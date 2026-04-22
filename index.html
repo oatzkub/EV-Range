@@ -759,19 +759,9 @@ footer {
 
     </div>
 
-    <!-- Single real-world box -->
-    <div class="rw-box">
-      <div class="rw-box-left">
-        <div class="rw-box-label">ประมาณการระยะทางจริงในไทย</div>
-        <div class="rw-box-val" id="rw-thai">—</div>
-        <div class="rw-box-sub">กิโลเมตร · อ้างอิงจาก EPA เป็นฐาน</div>
-      </div>
-      <div class="rw-box-desc" id="rw-desc">—</div>
-    </div>
-
     <p class="footnote">
-      ระยะทางจริงในไทยคำนวณจากสภาพแวดล้อมทั่วไป: อุณหภูมิเฉลี่ย 32°C · เปิดแอร์ตลอด · การจราจรแบบผสม ·
-      ค่าที่ได้เป็นการประมาณการเพื่อการศึกษา ค่าจริงขึ้นอยู่กับรุ่นรถ พฤติกรรมการขับ และสภาพถนน
+      ระยะทางที่แสดงคือค่าที่แต่ละมาตรฐานจะรายงานภายใต้เงื่อนไขการทดสอบของตัวเอง ·
+      ค่าจริงขึ้นอยู่กับรุ่นรถ พฤติกรรมการขับ อุณหภูมิ และสภาพถนน
     </p>
   </div>
 
@@ -930,32 +920,6 @@ footer {
       document.getElementById('f-'+s).style.width = Math.min(r / maxR * 100, 100) + '%';
       document.getElementById('k-'+s).textContent = r + ' km';
     });
-
-    // Single Thai real-world estimate (based on EPA as most conservative baseline)
-    // Thai factors: ~32°C avg, AC always on, mixed traffic
-    const thaiTempPenalty = 1 + Math.pow(Math.abs(32 - 22), 2) * 0.0007; // 32°C
-    const acPenalty = 1.12; // AC always on adds ~12% consumption
-    const thaiBase = 17.5 * roadF * speedF * thaiTempPenalty * acPenalty;
-    const thaiRange = Math.round(usable / thaiBase * 100);
-
-    document.getElementById('rw-thai').textContent = thaiRange;
-
-    // Dynamic description
-    const pctOfNedc = Math.round(thaiRange / ranges.nedc * 100);
-    const pctOfWltp = Math.round(thaiRange / ranges.wltp * 100);
-    const roadTh = road === 'city' ? 'ในเมือง' : road === 'highway' ? 'ทางด่วน' : 'แบบผสม';
-
-    let tempNote = '';
-    if (temp < 15) tempNote = `อุณหภูมิที่ตั้ง ${temp}°C เย็นกว่าไทยมาก แต่สภาพจริงในไทยจะร้อนกว่าเสมอ `;
-    else if (temp > 30) tempNote = `อุณหภูมิที่ตั้ง ${temp}°C ใกล้เคียงสภาพไทยจริง `;
-    else tempNote = `อุณหภูมิที่ตั้ง ${temp}°C เย็นกว่าสภาพจริงในไทย (เฉลี่ย 32°C) `;
-
-    document.getElementById('rw-desc').innerHTML =
-      `${tempNote}การขับ${roadTh} ที่ความเร็วเฉลี่ย <strong>${speed} km/h</strong> ` +
-      `กับแบตเตอรี่ <strong>${battery} kWh</strong> — ` +
-      `ระยะทางจริงในไทยอยู่ที่ประมาณ <strong>${pctOfNedc}%</strong> ของตัวเลข NEDC ` +
-      `และ <strong>${pctOfWltp}%</strong> ของตัวเลข WLTP ` +
-      `สาเหตุหลักคืออากาศร้อน + การใช้แอร์ตลอดเวลา ซึ่งกินพลังงานเพิ่มขึ้น 10–15%`;
   }
 
   calc();

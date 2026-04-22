@@ -520,6 +520,140 @@ select {
 
 .phase-item:last-child { border: none; }
 
+/* ── NEDC Converter ── */
+.converter-panel {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--nedc);
+  padding: 2rem 2.5rem;
+}
+
+.converter-top {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.converter-input-wrap { flex: 1; min-width: 220px; }
+
+.nedc-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid var(--nedc);
+  background: var(--paper);
+}
+
+.nedc-prefix {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+  background: var(--nedc);
+  padding: 0.55rem 0.75rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.nedc-suffix {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 0.55rem 0.75rem;
+  background: var(--faint);
+  white-space: nowrap;
+}
+
+.nedc-input-row input[type="number"] {
+  border: none;
+  border-bottom: none;
+  flex: 1;
+  font-size: 1.4rem;
+  padding: 0.4rem 0.6rem;
+  background: transparent;
+  min-width: 80px;
+}
+
+.nedc-input-row input[type="number"]:focus { background: #fff; }
+
+.converter-ratio-note {
+  flex: 1;
+  min-width: 200px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.7;
+  padding: 0.75rem 1rem;
+  background: var(--faint);
+  border-left: 2px solid var(--rule);
+  align-self: center;
+}
+
+.conv-results {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 600px) { .conv-results { grid-template-columns: 1fr; } }
+
+.conv-card {
+  padding: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+.conv-std {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.conv-km {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.8rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  transition: all 0.3s;
+}
+
+.wltp-conv .conv-km { color: var(--wltp); }
+.cltc-conv .conv-km { color: var(--cltc); }
+.epa-conv  .conv-km { color: var(--epa); }
+
+.conv-unit {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.conv-ratio {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.conv-bar-track {
+  height: 3px;
+  background: var(--faint);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.conv-bar-fill { height: 100%; }
+.wltp-fill { background: var(--wltp); }
+.cltc-fill { background: var(--cltc); }
+.epa-fill  { background: var(--epa); }
+
 footer {
   text-align: center;
   padding: 2rem;
@@ -688,9 +822,61 @@ footer {
 
   </div><!-- /standards-section -->
 
+  <!-- NEDC Converter -->
+  <div class="section-rule">
+    <div class="section-rule-text">แปลงค่าจาก NEDC</div>
+  </div>
+
+  <div class="converter-panel">
+    <div class="converter-top">
+      <div class="converter-input-wrap">
+        <div class="overline" style="margin-bottom:0.6rem">กรอกระยะ NEDC (km)</div>
+        <div class="nedc-input-row">
+          <span class="nedc-prefix">NEDC</span>
+          <input type="number" id="nedc-km" min="1" max="2000" value="500" step="1" placeholder="เช่น 500">
+          <span class="nedc-suffix">km</span>
+        </div>
+        <div class="ctrl-hint" style="margin-top:0.5rem">กรอกตัวเลข NEDC จากสเปครถ แล้วระบบจะแปลงให้อัตโนมัติ</div>
+      </div>
+      <div class="converter-ratio-note">
+        อัตราแปลงอ้างอิงจากงานวิจัยและข้อมูลจริงของรถหลายรุ่น<br>
+        ค่าอาจต่างกัน ±5–10% ตามรุ่นรถ
+      </div>
+    </div>
+
+    <div class="conv-results">
+      <div class="conv-card wltp-conv">
+        <div class="conv-std wltp-c">WLTP</div>
+        <div class="conv-km" id="conv-wltp">—</div>
+        <div class="conv-unit">km</div>
+        <div class="conv-ratio">× 0.78</div>
+        <div class="conv-bar-track"><div class="conv-bar-fill wltp-fill" id="cb-wltp" style="width:78%"></div></div>
+      </div>
+      <div class="conv-card cltc-conv">
+        <div class="conv-std cltc-c">CLTC</div>
+        <div class="conv-km" id="conv-cltc">—</div>
+        <div class="conv-unit">km</div>
+        <div class="conv-ratio">× 0.85</div>
+        <div class="conv-bar-track"><div class="conv-bar-fill cltc-fill" id="cb-cltc" style="width:85%"></div></div>
+      </div>
+      <div class="conv-card epa-conv">
+        <div class="conv-std epa-c">EPA</div>
+        <div class="conv-km" id="conv-epa">—</div>
+        <div class="conv-unit">km</div>
+        <div class="conv-ratio">× 0.62</div>
+        <div class="conv-bar-track"><div class="conv-bar-fill epa-fill" id="cb-epa" style="width:62%"></div></div>
+      </div>
+    </div>
+
+    <p class="footnote" style="margin-top:1.25rem">
+      WLTP ≈ NEDC × 0.78 · CLTC ≈ NEDC × 0.85 · EPA ≈ NEDC × 0.62 ·
+      อัตราส่วนเหล่านี้เป็นค่าเฉลี่ยจากการเปรียบเทียบรถ EV หลายรุ่น ไม่ใช่สูตรทางการ
+    </p>
+  </div>
+
   <!-- Controls -->
   <div class="section-rule">
-    <div class="section-rule-text">คำนวณและเปรียบเทียบ</div>
+    <div class="section-rule-text">คำนวณจากขนาดแบตเตอรี่</div>
   </div>
 
   <div class="controls-panel">
@@ -922,7 +1108,22 @@ footer {
     });
   }
 
-  calc();
+  // NEDC converter
+  const nedcInput = document.getElementById('nedc-km');
+  nedcInput.addEventListener('input', convertNedc);
+  nedcInput.addEventListener('change', convertNedc);
+
+  function convertNedc() {
+    const nedc = Math.max(1, +nedcInput.value || 500);
+    // Conversion ratios based on real-world multi-model averages
+    const result = { wltp: nedc * 0.78, cltc: nedc * 0.85, epa: nedc * 0.62 };
+    document.getElementById('conv-wltp').textContent = Math.round(result.wltp);
+    document.getElementById('conv-cltc').textContent = Math.round(result.cltc);
+    document.getElementById('conv-epa').textContent  = Math.round(result.epa);
+  }
+
+  convertNedc();
+
 </script>
 </body>
 </html>

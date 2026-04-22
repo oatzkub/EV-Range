@@ -295,27 +295,33 @@ h1 em {
   font-weight: 500;
 }
 
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 2px;
-  background: var(--rule);
-  outline: none;
-  cursor: pointer;
+input[type="number"] {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-bottom: 2px solid var(--ink);
   border-radius: 0;
+  color: var(--ink);
+  padding: 0.5rem 0.6rem;
+  font-size: 1.1rem;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: var(--ink);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.15s;
-}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.4); }
+input[type="number"]:focus { border-bottom-color: var(--cltc); background: #fff; }
+
+.ctrl-hint {
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  margin-top: 0.2rem;
+}
 
 select {
   background: var(--paper);
@@ -354,7 +360,7 @@ select {
 
 .bar-row {
   display: grid;
-  grid-template-columns: 52px 1fr 80px 90px;
+  grid-template-columns: 52px 1fr 80px;
   align-items: center;
   gap: 1rem;
 }
@@ -394,21 +400,59 @@ select {
   font-weight: 500;
 }
 
-.bar-real {
+@media (max-width: 600px) {
+  .bar-row { grid-template-columns: 48px 1fr 70px; }
+}
+
+.rw-box {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--faint);
+  border-left: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.rw-box-left { flex: 1; }
+
+.rw-box-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+.rw-box-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.rw-box-sub {
   font-family: 'DM Mono', monospace;
   font-size: 0.72rem;
   color: var(--muted);
+  margin-top: 0.3rem;
 }
 
-.real-note {
-  margin-top: 0.2rem;
-  font-size: 0.65rem;
-  color: var(--muted);
+.rw-box-desc {
+  flex: 2;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: #4a4540;
+  border-left: 1px solid var(--rule);
+  padding-left: 1.25rem;
 }
 
-@media (max-width: 600px) {
-  .bar-row { grid-template-columns: 48px 1fr 70px; }
-  .bar-real { display: none; }
+@media (max-width: 640px) {
+  .rw-box { flex-direction: column; }
+  .rw-box-desc { border-left: none; border-top: 1px solid var(--rule); padding-left: 0; padding-top: 0.75rem; }
 }
 
 .footnote {
@@ -650,43 +694,35 @@ footer {
   </div>
 
   <div class="controls-panel">
-    <div class="overline" style="margin-bottom:1.5rem">ปรับค่าตัวแปร</div>
+    <div class="overline" style="margin-bottom:1.5rem">กรอกค่าตัวแปร</div>
     <div class="controls-row">
 
       <div class="ctrl">
-        <label class="ctrl-label">
-          แบตเตอรี่ (kWh)
-          <span class="ctrl-val" id="v-bat">75</span>
-        </label>
-        <input type="range" id="r-bat" min="20" max="160" value="75" step="1">
+        <label class="ctrl-label">แบตเตอรี่ (kWh)</label>
+        <input type="number" id="r-bat" min="5" max="300" value="50" step="1">
+        <div class="ctrl-hint">ขนาดแบตเตอรี่ทั้งหมด · ปกติ 40–100 kWh</div>
       </div>
 
       <div class="ctrl">
-        <label class="ctrl-label">
-          อุณหภูมิ (°C)
-          <span class="ctrl-val" id="v-tmp">25</span>
-        </label>
-        <input type="range" id="r-tmp" min="-10" max="45" value="25" step="1">
+        <label class="ctrl-label">อุณหภูมิแวดล้อม (°C)</label>
+        <input type="number" id="r-tmp" min="-30" max="55" value="20" step="1">
+        <div class="ctrl-hint">อุณหภูมิขณะขับ · ไทยเฉลี่ย 28–35°C</div>
       </div>
 
       <div class="ctrl">
-        <label class="ctrl-label">
-          ความเร็วเฉลี่ย (km/h)
-          <span class="ctrl-val" id="v-spd">60</span>
-        </label>
-        <input type="range" id="r-spd" min="20" max="130" value="60" step="1">
+        <label class="ctrl-label">ความเร็วเฉลี่ย (km/h)</label>
+        <input type="number" id="r-spd" min="10" max="200" value="60" step="1">
+        <div class="ctrl-hint">ความเร็วเฉลี่ยตลอดการเดินทาง</div>
       </div>
 
       <div class="ctrl">
-        <label class="ctrl-label">
-          ประเภทถนน
-          <span class="ctrl-val" id="v-road">ผสม</span>
-        </label>
+        <label class="ctrl-label">ประเภทถนน</label>
         <select id="r-road">
-          <option value="city">ในเมือง</option>
-          <option value="mixed" selected>ผสม</option>
-          <option value="highway">ทางด่วน</option>
+          <option value="city">ในเมือง (หยุด-ออกตัวบ่อย)</option>
+          <option value="mixed" selected>ผสม (เมือง + ทางหลวง)</option>
+          <option value="highway">ทางด่วน / ระหว่างเมือง</option>
         </select>
+        <div class="ctrl-hint">ลักษณะการเดินทางหลัก</div>
       </div>
 
     </div>
@@ -694,43 +730,48 @@ footer {
 
   <!-- Results -->
   <div class="results-panel">
-    <div class="results-title">// ระยะทางที่อ้างสิทธิ์ vs ประมาณการจริงในไทย</div>
+    <div class="results-title">// ระยะทางที่แต่ละมาตรฐานอ้าง</div>
     <div class="bar-rows">
 
       <div class="bar-row nedc">
         <div class="bar-std nedc-c">NEDC</div>
         <div class="track"><div class="fill" id="f-nedc" style="width:0%"></div></div>
         <div class="bar-km nedc-c" id="k-nedc">—</div>
-        <div class="bar-real">จริงในไทย: <span id="rw-nedc" style="color:var(--ink)">—</span> km</div>
       </div>
 
       <div class="bar-row wltp">
         <div class="bar-std wltp-c">WLTP</div>
         <div class="track"><div class="fill" id="f-wltp" style="width:0%"></div></div>
         <div class="bar-km wltp-c" id="k-wltp">—</div>
-        <div class="bar-real">จริงในไทย: <span id="rw-wltp" style="color:var(--ink)">—</span> km</div>
       </div>
 
       <div class="bar-row cltc">
         <div class="bar-std cltc-c">CLTC</div>
         <div class="track"><div class="fill" id="f-cltc" style="width:0%"></div></div>
         <div class="bar-km cltc-c" id="k-cltc">—</div>
-        <div class="bar-real">จริงในไทย: <span id="rw-cltc" style="color:var(--ink)">—</span> km</div>
       </div>
 
       <div class="bar-row epa">
         <div class="bar-std epa-c">EPA</div>
         <div class="track"><div class="fill" id="f-epa" style="width:0%"></div></div>
         <div class="bar-km epa-c" id="k-epa">—</div>
-        <div class="bar-real">จริงในไทย: <span id="rw-epa" style="color:var(--ink)">—</span> km</div>
       </div>
 
     </div>
 
+    <!-- Single real-world box -->
+    <div class="rw-box">
+      <div class="rw-box-left">
+        <div class="rw-box-label">ประมาณการระยะทางจริงในไทย</div>
+        <div class="rw-box-val" id="rw-thai">—</div>
+        <div class="rw-box-sub">กิโลเมตร · อ้างอิงจาก EPA เป็นฐาน</div>
+      </div>
+      <div class="rw-box-desc" id="rw-desc">—</div>
+    </div>
+
     <p class="footnote">
-      ค่าในคอลัมน์ซ้าย = ระยะทางที่แต่ละมาตรฐานจะรายงาน (ตามเงื่อนไขการทดสอบของมาตรฐานนั้น) ·
-      ค่า "จริงในไทย" = ประมาณการสำหรับสภาพอากาศร้อน อุณหภูมิเฉลี่ย 32°C และการใช้แอร์ตลอด ·
-      การคำนวณเป็นการประมาณการเพื่อการศึกษา ค่าจริงขึ้นกับรุ่นรถและพฤติกรรมการขับ
+      ระยะทางจริงในไทยคำนวณจากสภาพแวดล้อมทั่วไป: อุณหภูมิเฉลี่ย 32°C · เปิดแอร์ตลอด · การจราจรแบบผสม ·
+      ค่าที่ได้เป็นการประมาณการเพื่อการศึกษา ค่าจริงขึ้นอยู่กับรุ่นรถ พฤติกรรมการขับ และสภาพถนน
     </p>
   </div>
 
@@ -851,63 +892,70 @@ footer {
 <footer>EV RANGE TESTING STANDARDS · ข้อมูลเพื่อการศึกษา · ค่าจริงขึ้นอยู่กับรุ่นรถและพฤติกรรมการขับ</footer>
 
 <script>
-  const cfg = [
-    { id:'bat', unit:' kWh', label:'v-bat' },
-    { id:'tmp', unit:'°C',   label:'v-tmp' },
-    { id:'spd', unit:' km/h',label:'v-spd' },
-  ];
-
-  cfg.forEach(c => {
-    document.getElementById('r-'+c.id).addEventListener('input', function(){
-      document.getElementById(c.label).textContent = this.value + c.unit;
-      calc();
-    });
+  ['r-bat','r-tmp','r-spd'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calc);
+    document.getElementById(id).addEventListener('change', calc);
   });
+  document.getElementById('r-road').addEventListener('change', calc);
 
-  const roadNames = { city:'ในเมือง', mixed:'ผสม', highway:'ทางด่วน' };
-  document.getElementById('r-road').addEventListener('change', function(){
-    document.getElementById('v-road').textContent = roadNames[this.value];
-    calc();
-  });
+  function clamp(v, mn, mx) { return Math.max(mn, Math.min(mx, v)); }
 
   function calc() {
-    const battery = +document.getElementById('r-bat').value;
-    const temp    = +document.getElementById('r-tmp').value;
-    const speed   = +document.getElementById('r-spd').value;
+    const battery = clamp(+document.getElementById('r-bat').value || 50, 5, 300);
+    const temp    = clamp(+document.getElementById('r-tmp').value || 20, -30, 55);
+    const speed   = clamp(+document.getElementById('r-spd').value || 60, 10, 200);
     const road    = document.getElementById('r-road').value;
 
     const usable = battery * 0.9;
 
-    // Base consumption kWh/100km
-    const roadF  = road === 'city' ? 1.12 : road === 'highway' ? 0.88 : 1.0;
+    const roadF = road === 'city' ? 1.12 : road === 'highway' ? 0.88 : 1.0;
     const speedF = 1 + Math.pow(Math.max(speed - 70, 0) / 80, 2) * 3.0
                      + Math.pow(Math.max(70 - speed, 0) / 80, 1.5) * 0.3;
-    const tempF  = 1 + Math.pow(Math.abs(temp - 22), 2) * 0.0007;
-    const base   = 17.5 * roadF * speedF * tempF;
+    const tempF = 1 + Math.pow(Math.abs(temp - 22), 2) * 0.0007;
+    const base  = 17.5 * roadF * speedF * tempF;
 
-    // Each standard's effective test consumption (lower = more range claimed)
     const cons = {
-      nedc: base * 0.62,  // very optimistic: slow speeds, no HVAC, perfect temp
-      wltp: base * 0.82,  // better but still lab
-      cltc: base * 0.78,  // low avg speed favors regen
-      epa:  base * 1.00,  // most conservative
+      nedc: base * 0.62,
+      wltp: base * 0.82,
+      cltc: base * 0.78,
+      epa:  base * 1.00,
     };
 
     const ranges = {};
     Object.keys(cons).forEach(k => { ranges[k] = Math.round(usable / cons[k] * 100); });
 
-    // Thai real-world factors (hot climate ~32°C, AC always on)
-    const rwF = { nedc: 0.61, wltp: 0.80, cltc: 0.76, epa: 0.91 };
-
     const maxR = Math.max(...Object.values(ranges));
-
     ['nedc','wltp','cltc','epa'].forEach(s => {
-      const r  = ranges[s];
-      const pct = Math.min(r / maxR * 100, 100);
-      document.getElementById('f-'+s).style.width = pct + '%';
+      const r = ranges[s];
+      document.getElementById('f-'+s).style.width = Math.min(r / maxR * 100, 100) + '%';
       document.getElementById('k-'+s).textContent = r + ' km';
-      document.getElementById('rw-'+s).textContent = Math.round(r * rwF[s]);
     });
+
+    // Single Thai real-world estimate (based on EPA as most conservative baseline)
+    // Thai factors: ~32°C avg, AC always on, mixed traffic
+    const thaiTempPenalty = 1 + Math.pow(Math.abs(32 - 22), 2) * 0.0007; // 32°C
+    const acPenalty = 1.12; // AC always on adds ~12% consumption
+    const thaiBase = 17.5 * roadF * speedF * thaiTempPenalty * acPenalty;
+    const thaiRange = Math.round(usable / thaiBase * 100);
+
+    document.getElementById('rw-thai').textContent = thaiRange;
+
+    // Dynamic description
+    const pctOfNedc = Math.round(thaiRange / ranges.nedc * 100);
+    const pctOfWltp = Math.round(thaiRange / ranges.wltp * 100);
+    const roadTh = road === 'city' ? 'ในเมือง' : road === 'highway' ? 'ทางด่วน' : 'แบบผสม';
+
+    let tempNote = '';
+    if (temp < 15) tempNote = `อุณหภูมิที่ตั้ง ${temp}°C เย็นกว่าไทยมาก แต่สภาพจริงในไทยจะร้อนกว่าเสมอ `;
+    else if (temp > 30) tempNote = `อุณหภูมิที่ตั้ง ${temp}°C ใกล้เคียงสภาพไทยจริง `;
+    else tempNote = `อุณหภูมิที่ตั้ง ${temp}°C เย็นกว่าสภาพจริงในไทย (เฉลี่ย 32°C) `;
+
+    document.getElementById('rw-desc').innerHTML =
+      `${tempNote}การขับ${roadTh} ที่ความเร็วเฉลี่ย <strong>${speed} km/h</strong> ` +
+      `กับแบตเตอรี่ <strong>${battery} kWh</strong> — ` +
+      `ระยะทางจริงในไทยอยู่ที่ประมาณ <strong>${pctOfNedc}%</strong> ของตัวเลข NEDC ` +
+      `และ <strong>${pctOfWltp}%</strong> ของตัวเลข WLTP ` +
+      `สาเหตุหลักคืออากาศร้อน + การใช้แอร์ตลอดเวลา ซึ่งกินพลังงานเพิ่มขึ้น 10–15%`;
   }
 
   calc();
